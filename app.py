@@ -3,37 +3,6 @@ import babyConnect, hatchBaby, datetime, secrets
 bc = babyConnect.Init(secrets.bc['user'], secrets.bc['password'])
 hb = hatchBaby.Init(secrets.hb['user'], secrets.hb['password'])
 
-# length = {
-#     'length':21,
-#     'measurementDate':'2019-11-25'
-#     }
-
-# weight = {
-#     'weight':38,
-#     'measurementTime':'2019-11-25 10:41:00'
-#     }
-
-# feeding = {
-#     'startTime':'2019-11-25 09:33:00',
-#     'endTime':'2019-11-25 09:57:00',
-#     'category':'Manual',
-#     'method':'Bottle',
-#     'source':'Formula',
-#     'amount':88.72
-#     }
-
-# diaper = {
-#     'diaperType':'Wet',
-#     'diaperDate':'2019-11-25 09:57:00'
-#     }
-
-# sleep = {
-#     'startTime':'2019-11-25 10:59:00',
-#     'endTime':'2019-11-25 13:59:00',
-#     'durationInSeconds':60000
-#     }
-
-
 def parseTime(t):
 
     t = t.split()
