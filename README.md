@@ -1,5 +1,5 @@
 # hatchConnect
-Our childcare provider uses *Baby Connect* to the day.  We have used 'Hatch Baby' since birth.  This allows us to easily pull the days data out of *Baby Connect* and post it to *Hatch Baby*
+Our childcare provider uses *Baby Connect* to log the day.  We have used 'Hatch Baby' since birth.  This allows us to easily pull the days data out of *Baby Connect* and post it to *Hatch Baby*
 
 ## Hatch Baby Payloads
 **Note:** There are many more properties available. Use a 'Get' function to view them
