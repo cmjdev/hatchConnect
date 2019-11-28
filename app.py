@@ -1,69 +1,101 @@
-import babyConnect, hatchBaby, datetime, secrets
+import babyconnect
+import hatchbaby
+import datetime
+import secrets
 
-bc = babyConnect.Init(secrets.bc['user'], secrets.bc['password'])
-hb = hatchBaby.Init(secrets.hb['user'], secrets.hb['password'])
+bc = babyconnect.BabyConnect(secrets.bc["user"], secrets.bc["password"])
+hb = hatchbaby.HatchBaby(secrets.hb["user"], secrets.hb["password"])
 
-def parseTime(t):
 
-    t = t.split()
+def parse_bctime(bctime):
+    """
+    Return a datetime object given Baby Connect timestamp
+    """
 
-    date = t[0].split("-")
-    time = t[1].split(":")
+    bctime = bctime.split()
+
+    date = bctime[0].split("-")
+    time = bctime[1].split(":")
     return datetime.datetime(
         int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1])
     )
 
 
-def getDuration(s, e):
+def get_duration(bcstart, bcend):
+    """
+    Return duration in seconds given two Baby Connect timestamps
+    """
 
-    start = parseTime(s)
-    end = parseTime(e)
+    start = parse_bctime(bcstart)
+    end = parse_bctime(bcend)
 
     delta = end - start
 
     return delta.total_seconds()
 
 
-def getTimeString(t):
+def get_tstring(bctime):
+    """
+    Return Hatch Baby timestamp given Baby Connect timestamp
+    """
 
-    return parseTime(t).strftime("%Y-%m-%d %H:%M:%S")
+    return parse_bctime(bctime).strftime("%Y-%m-%d %H:%M:%S")
 
 
-def doBottle(row):
+def do_bottle(row):
+    """
+    Returns Hatch Baby Response
+    
+    Given a bottle record from Baby Connect, build the payload for
+    Hatch Baby and POST to the API
+    """
 
     feeding = {
-        "startTime": getTimeString(row[0]),
-        "endTime": getTimeString(row[1]),
+        "startTime": get_tstring(row[0]),
+        "endTime": get_tstring(row[1]),
         "category": "Manual",
         "method": "Bottle",
         "source": "Breastmilk" if (row[5] == "Milk") else "Formula",
         "amount": float(row[4]) * 29.6,
-        "durationInSeconds": getDuration(row[0], row[1])
+        "durationInSeconds": get_duration(row[0], row[1]),
     }
 
     return hb.PostFeeding(0, feeding)
 
 
-def doSleep(row):
+def do_sleep(row):
+    """
+    Returns Hatch Baby API Response
+    
+    Given a sleep record from Baby Connect, build the payload for
+    Hatch Baby and POST to the API
+    """
+
     sleep = {
-        "startTime": getTimeString(row[0]),
-        "endTime": getTimeString(row[1]),
-        "durationInSeconds": getDuration(row[0], row[1]),
+        "startTime": get_tstring(row[0]),
+        "endTime": get_tstring(row[1]),
+        "durationInSeconds": get_duration(row[0], row[1]),
     }
 
     return hb.PostSleep(0, sleep)
 
 
-def doDiaper(row):
+def do_diaper(row):
+    """
+    Returns Hatch Baby API Response
+    
+    Given a diaper record from Baby Connect, build the payload for
+    Hatch Baby and POST to the API
+    """
 
-    d = row[5]
+    diaper_type = row[5]
 
-    if d == "BM":
-        d = "Dirty"
-    elif d == "BM+Wet":
-        d = "Both"
+    if diaper_type == "BM":
+        diaper_type = "Dirty"
+    elif diaper_type == "BM+Wet":
+        diaper_type = "Both"
 
-    diaper = {"diaperType": d, "diaperDate": getTimeString(row[0])}
+    diaper = {"diaperType": diaper_type, "diaperDate": get_tstring(row[0])}
 
     return hb.PostDiaper(0, diaper)
 
@@ -72,13 +104,13 @@ def doDiaper(row):
 
 today = datetime.date.today().strftime("%m/%d/%Y")
 
-bcdata = bc.GetCsv(0, today)
+bcdata = bc.get_csv(0, today)
 
 for row in bcdata:
     activity = row[2]
     if activity == "Bottle":
-        print(doBottle(row))
+        print(do_bottle(row))
     elif activity == "Sleep":
-        print(doSleep(row))
+        print(do_sleep(row))
     elif activity == "Diaper":
-        print(doDiaper(row))
+        print(do_diaper(row))
