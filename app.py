@@ -60,7 +60,7 @@ def do_bottle(row):
         "durationInSeconds": get_duration(row[0], row[1]),
     }
 
-    return hb.PostFeeding(0, feeding)
+    return hb.post_feeding(0, feeding)
 
 
 def do_sleep(row):
@@ -77,7 +77,7 @@ def do_sleep(row):
         "durationInSeconds": get_duration(row[0], row[1]),
     }
 
-    return hb.PostSleep(0, sleep)
+    return hb.post_sleep(0, sleep)
 
 
 def do_diaper(row):
@@ -97,7 +97,7 @@ def do_diaper(row):
 
     diaper = {"diaperType": diaper_type, "diaperDate": get_tstring(row[0])}
 
-    return hb.PostDiaper(0, diaper)
+    return hb.post_diaper(0, diaper)
 
 
 ###
